@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<input type="text" id="name" placeholder="Enter your name">
+<button onclick="submitScore(document.getElementById('name').value)">Play</button>
+    
+
+<canvas id="myCanvas" width="500" height="500" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.
+</canvas>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    </style>
+
+
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+<script>
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+var ballRadius = 10;
+var x = canvas.width/2;
+var y = canvas.height-30;
+var dx = 0;
+var dy = 0;
+var img = new Image();   // Create new img element
+img.src = 'GHOST.png'; // Set source path
+var firebaseConfig = {
+      apiKey: "AIzaSyAZL8E_LYPMpE8lVjlLO4-KgBKQnhYImwI",
+      authDomain: "ghost-game-d297e.firebaseapp.com",
+      projectId: "ghost-game-d297e",
+      storageBucket: "ghost-game-d297e.appspot.com",
+      messagingSenderId: "212629377531",
+      appId: "1:212629377531:web:071a9cf47853fc432e3b5e",
+      measurementId: "G-HV8N993L1X"
+    };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  var database = firebase.database();
+
+
+img.onload = function() {
+    // The image is now fully loaded
+    // Now it's safe to draw the image
+    ctx.drawImage(img, x, y, img.width, img.height);
+};
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, x, y, img.width, img.height);
+    x += dx;
+    y += dy;
+}
+
+setInterval(draw, 10);
+
+document.onkeydown = function(e) {
+    switch (e.keyCode) {
+        case 37:
+            dx = -2;
+            dy = 0;
+            break;
+        case 38:
+            dx = 0;
+            dy = -2;
+            break;
+        case 39:
+            dx = 2;
+            dy = 0;
+            break;
+        case 40:
+            dx = 0;
+            dy = 2;
+            break;
+    }
+};
+
+document.onkeyup = function(e) {
+    dx = 0;
+    dy = 0;
+};
+
+function submitScore(name) {
+  var newPlayerRef = database.ref('players').push();
+  newPlayerRef.set({
+    name: name,
+    timestamp: firebase.database.ServerValue.TIMESTAMP
+  });
+}
+
+
+</script>
+
+</body>
+</html>
